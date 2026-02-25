@@ -204,7 +204,6 @@ public class ISOExplosion extends Explosion {
  					if (entity instanceof FallingBlockEntity || BaseFeature.shouldTakeReducedKnockback(entity))
 						d11 *= 0.2d;
 					d11 *= BaseFeature.getKnockbackMultiplier(((ExplosionAccessor) this).getSource());
-					d11 *= BaseFeature.knockbackMultiplier;
 					d11 = Math.min(d11, 10f);
 					if (entity instanceof FallingBlockEntity) {
 						d11 = Math.min(d11, 0.25f);

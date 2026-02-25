@@ -49,9 +49,9 @@ public class BaseFeature extends Feature {
 	public static Boolean enableFlyingBlocks = false;
 	@Config(description = "If true, creepers explosions will drop no blocks.")
 	public static Boolean creeperCollateral = false;
-	@Config
+	@Config(description = "Entities can have a knockback_multiplier nbt tag that will override this.")
 	public static Double knockbackMultiplier = 1d;
-	@Config(description = "Damage multiplier. Mobs can have a damage_multiplier nbt tag that will override this.")
+	@Config(description = "Entities can have a damage_multiplier nbt tag that will override this.")
 	public static Double damageMultiplier = 0.85d;
 	@Config(description = "Disabled if set to 0.")
 	public static Integer limitExplosionSize = 12;
@@ -149,7 +149,7 @@ public class BaseFeature extends Feature {
 	}
 
 	public static float getKnockbackMultiplier(@Nullable Entity entity) {
-		return entity != null && ModNBTData.contains(entity, KNOCKBACK_MULTIPLIER_TAG) ? ModNBTData.get(entity, KNOCKBACK_MULTIPLIER_TAG, Float.class) : 1f;
+		return entity != null && ModNBTData.contains(entity, KNOCKBACK_MULTIPLIER_TAG) ? ModNBTData.get(entity, KNOCKBACK_MULTIPLIER_TAG, Float.class) : knockbackMultiplier.floatValue();
 	}
 
 	public static void setDamageMultiplierTag(Entity entity, float damageMultiplier) {
