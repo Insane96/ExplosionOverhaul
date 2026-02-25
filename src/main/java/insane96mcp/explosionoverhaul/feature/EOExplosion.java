@@ -48,7 +48,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-public class ISOExplosion extends Explosion {
+public class EOExplosion extends Explosion {
 	ObjectArrayList<Pair<ItemStack, BlockPos>> droppedItems = new ObjectArrayList<>();
 	boolean creeperCollateral;
 	public final boolean poofParticles;
@@ -57,7 +57,7 @@ public class ISOExplosion extends Explosion {
 
 	private List<Entity> affectedEntities = new ArrayList<>();
 
-	public ISOExplosion(Level level, @Nullable Entity source, @Nullable DamageSource damageSource, @Nullable ExplosionDamageCalculator damageCalculator, double x, double y, double z, float radius, boolean fire, BlockInteraction blockInteraction, ParticleOptions smallExplosionParticles, ParticleOptions largeExplosionParticles, Holder<SoundEvent> explosionSound, boolean creeperCollateral, boolean poofParticles) {
+	public EOExplosion(Level level, @Nullable Entity source, @Nullable DamageSource damageSource, @Nullable ExplosionDamageCalculator damageCalculator, double x, double y, double z, float radius, boolean fire, BlockInteraction blockInteraction, ParticleOptions smallExplosionParticles, ParticleOptions largeExplosionParticles, Holder<SoundEvent> explosionSound, boolean creeperCollateral, boolean poofParticles) {
 		super(
 				level,
 				source,
@@ -206,7 +206,7 @@ public class ISOExplosion extends Explosion {
 					d11 *= BaseFeature.getKnockbackMultiplier(((ExplosionAccessor) this).getSource());
 					d11 = Math.min(d11, 10f);
 					if (entity instanceof FallingBlockEntity) {
-						d11 = Math.min(d11, 0.25f);
+						d11 = Math.min(d11, 0.35f);
 						xDistance += ((ExplosionAccessor) this).getLevel().getRandom().nextFloat() - 0.5f;
 						zDistance += ((ExplosionAccessor) this).getLevel().getRandom().nextFloat() - 0.5f;
 					}
@@ -306,7 +306,7 @@ public class ISOExplosion extends Explosion {
 	}
 
 	@Nullable
-	public static ISOExplosion explode(Level level, @Nullable Entity source, @Nullable DamageSource damageSource, @Nullable ExplosionDamageCalculator damageCalculator, double x, double y, double z, float radius, boolean fire, Level.ExplosionInteraction explosionInteraction, ParticleOptions smallExplosionParticles, ParticleOptions largeExplosionParticles, Holder<SoundEvent> explosionSound, boolean poofParticles) {
+	public static EOExplosion explode(Level level, @Nullable Entity source, @Nullable DamageSource damageSource, @Nullable ExplosionDamageCalculator damageCalculator, double x, double y, double z, float radius, boolean fire, Level.ExplosionInteraction explosionInteraction, ParticleOptions smallExplosionParticles, ParticleOptions largeExplosionParticles, Holder<SoundEvent> explosionSound, boolean poofParticles) {
 		if (!(level instanceof ServerLevel serverLevel))
 			return null;
 		BlockInteraction blockInteraction = switch (explosionInteraction) {
@@ -321,8 +321,8 @@ public class ISOExplosion extends Explosion {
 		return explode(serverLevel, source, damageSource, damageCalculator, x, y, z, radius, fire, blockInteraction, smallExplosionParticles, largeExplosionParticles, explosionSound, poofParticles);
 	}
 
-	public static ISOExplosion explode(ServerLevel level, @Nullable Entity source, @Nullable DamageSource damageSource, @Nullable ExplosionDamageCalculator damageCalculator, double x, double y, double z, float radius, boolean fire, BlockInteraction blockInteraction, ParticleOptions smallExplosionParticles, ParticleOptions largeExplosionParticles, Holder<SoundEvent> explosionSound, boolean poofParticles) {
-		ISOExplosion explosion = new ISOExplosion(level, source, damageSource, damageCalculator, x, y, z, radius, fire, blockInteraction, smallExplosionParticles, largeExplosionParticles, explosionSound, BaseFeature.creeperCollateral, poofParticles);
+	public static EOExplosion explode(ServerLevel level, @Nullable Entity source, @Nullable DamageSource damageSource, @Nullable ExplosionDamageCalculator damageCalculator, double x, double y, double z, float radius, boolean fire, BlockInteraction blockInteraction, ParticleOptions smallExplosionParticles, ParticleOptions largeExplosionParticles, Holder<SoundEvent> explosionSound, boolean poofParticles) {
+		EOExplosion explosion = new EOExplosion(level, source, damageSource, damageCalculator, x, y, z, radius, fire, blockInteraction, smallExplosionParticles, largeExplosionParticles, explosionSound, BaseFeature.creeperCollateral, poofParticles);
 		//if (ISOEventFactory.onITRExplosionCreated(explosion)) return explosion;
 		if (level.getGameRules().getBoolean(BaseFeature.RULE_MOBGRIEFING))
 			explosion.gatherAffectedBlocks(!BaseFeature.disableExplosionRandomness);

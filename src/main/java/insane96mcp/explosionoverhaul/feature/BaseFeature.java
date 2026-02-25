@@ -116,7 +116,7 @@ public class BaseFeature extends Feature {
 		double y = e.center().y;
 		if (((ExplosionAccessor) e).getSource() != null && explosionAtHalfEntity)
 			y += ((ExplosionAccessor) e).getSource().getBbHeight() / 2d;
-		ISOExplosion.explode(level, ((ExplosionAccessor) e).getSource(), ((ExplosionAccessor) e).getDamageSource(), ((ExplosionAccessor) e).getDamageCalculator(), e.center().x, y, e.center().z, e.radius(), ((ExplosionAccessor) e).getFire(), e.getBlockInteraction(), e.getSmallExplosionParticles(), e.getLargeExplosionParticles(), e.getExplosionSound(), true);
+		EOExplosion.explode(level, ((ExplosionAccessor) e).getSource(), ((ExplosionAccessor) e).getDamageSource(), ((ExplosionAccessor) e).getDamageCalculator(), e.center().x, y, e.center().z, e.radius(), ((ExplosionAccessor) e).getFire(), e.getBlockInteraction(), e.getSmallExplosionParticles(), e.getLargeExplosionParticles(), e.getExplosionSound(), true);
 	}
 
 	public static boolean shouldTakeReducedKnockback(Entity entity) {
