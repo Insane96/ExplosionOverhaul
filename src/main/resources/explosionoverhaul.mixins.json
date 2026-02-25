@@ -1,0 +1,19 @@
+{
+    "required": true,
+    "package": "insane96mcp.explosionoverhaul.mixin",
+    "compatibilityLevel": "JAVA_21",
+    "mixins": [
+        "ExplosionMixin",
+        "accessor.ExplosionAccessor",
+        "accessor.LevelAccessor"
+    ],
+    "injectors": {
+        "defaultRequire": 1
+    },
+    "overwrites": {
+        "requireAnnotations": true
+    },
+    "mixinextras": {
+        "minVersion": "0.5.3"
+  }
+}
