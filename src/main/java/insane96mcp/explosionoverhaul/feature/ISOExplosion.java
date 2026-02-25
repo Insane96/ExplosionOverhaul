@@ -10,12 +10,10 @@ import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.particles.ParticleOptions;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.protocol.game.ClientboundExplodePacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -27,20 +25,18 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
-import net.minecraft.world.item.enchantment.Enchantments;
-import net.minecraft.world.level.*;
+import net.minecraft.world.level.Explosion;
+import net.minecraft.world.level.ExplosionDamageCalculator;
+import net.minecraft.world.level.GameRules;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseFireBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.piston.MovingPistonBlock;
 import net.minecraft.world.level.block.piston.PistonMovingBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.material.FluidState;
-import net.minecraft.world.level.storage.loot.LootParams;
-import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.entity.PartEntity;
@@ -61,7 +57,7 @@ public class ISOExplosion extends Explosion {
 
 	private List<Entity> affectedEntities = new ArrayList<>();
 
-	public ISOExplosion(Level level, @Nullable Entity source, @Nullable DamageSource damageSource, @Nullable ExplosionDamageCalculator damageCalculator, double x, double y, double z, float radius, boolean fire, BlockInteraction blockInteraction, boolean creeperCollateral, boolean poofParticles, ParticleOptions smallExplosionParticles, ParticleOptions largeExplosionParticles, Holder<SoundEvent> explosionSound) {
+	public ISOExplosion(Level level, @Nullable Entity source, @Nullable DamageSource damageSource, @Nullable ExplosionDamageCalculator damageCalculator, double x, double y, double z, float radius, boolean fire, BlockInteraction blockInteraction, ParticleOptions smallExplosionParticles, ParticleOptions largeExplosionParticles, Holder<SoundEvent> explosionSound, boolean creeperCollateral, boolean poofParticles) {
 		super(
 				level,
 				source,
@@ -211,7 +207,7 @@ public class ISOExplosion extends Explosion {
 					d11 *= BaseFeature.knockbackMultiplier;
 					d11 = Math.min(d11, 10f);
 					if (entity instanceof FallingBlockEntity) {
-						d11 = Math.min(d11, 1f);
+						d11 = Math.min(d11, 0.25f);
 						xDistance += ((ExplosionAccessor) this).getLevel().getRandom().nextFloat() - 0.5f;
 						zDistance += ((ExplosionAccessor) this).getLevel().getRandom().nextFloat() - 0.5f;
 					}
@@ -311,7 +307,7 @@ public class ISOExplosion extends Explosion {
 	}
 
 	@Nullable
-	public static ISOExplosion explode(Level level, @Nullable Entity source, @Nullable DamageSource damageSource, @Nullable ExplosionDamageCalculator damageCalculator, double x, double y, double z, float radius, boolean fire, Level.ExplosionInteraction explosionInteraction, boolean poofParticles) {
+	public static ISOExplosion explode(Level level, @Nullable Entity source, @Nullable DamageSource damageSource, @Nullable ExplosionDamageCalculator damageCalculator, double x, double y, double z, float radius, boolean fire, Level.ExplosionInteraction explosionInteraction, ParticleOptions smallExplosionParticles, ParticleOptions largeExplosionParticles, Holder<SoundEvent> explosionSound, boolean poofParticles) {
 		if (!(level instanceof ServerLevel serverLevel))
 			return null;
 		BlockInteraction blockInteraction = switch (explosionInteraction) {
@@ -323,11 +319,11 @@ public class ISOExplosion extends Explosion {
 			case TNT -> ((LevelAccessor) level).invokeGetDestroyType(GameRules.RULE_TNT_EXPLOSION_DROP_DECAY);
 			case TRIGGER -> Explosion.BlockInteraction.TRIGGER_BLOCK;
 		};
-		return explode(serverLevel, source, damageSource, damageCalculator, x, y, z, radius, fire, blockInteraction, poofParticles);
+		return explode(serverLevel, source, damageSource, damageCalculator, x, y, z, radius, fire, blockInteraction, smallExplosionParticles, largeExplosionParticles, explosionSound, poofParticles);
 	}
 
-	public static ISOExplosion explode(ServerLevel level, @Nullable Entity source, @Nullable DamageSource damageSource, @Nullable ExplosionDamageCalculator damageCalculator, double x, double y, double z, float radius, boolean fire, BlockInteraction blockInteraction,  boolean poofParticles) {
-		ISOExplosion explosion = new ISOExplosion(level, source, damageSource, damageCalculator, x, y, z, radius, fire, blockInteraction, BaseFeature.creeperCollateral, poofParticles);
+	public static ISOExplosion explode(ServerLevel level, @Nullable Entity source, @Nullable DamageSource damageSource, @Nullable ExplosionDamageCalculator damageCalculator, double x, double y, double z, float radius, boolean fire, BlockInteraction blockInteraction, ParticleOptions smallExplosionParticles, ParticleOptions largeExplosionParticles, Holder<SoundEvent> explosionSound, boolean poofParticles) {
+		ISOExplosion explosion = new ISOExplosion(level, source, damageSource, damageCalculator, x, y, z, radius, fire, blockInteraction, smallExplosionParticles, largeExplosionParticles, explosionSound, BaseFeature.creeperCollateral, poofParticles);
 		//if (ISOEventFactory.onITRExplosionCreated(explosion)) return explosion;
 		if (level.getGameRules().getBoolean(BaseFeature.RULE_MOBGRIEFING))
 			explosion.gatherAffectedBlocks(!BaseFeature.disableExplosionRandomness);
